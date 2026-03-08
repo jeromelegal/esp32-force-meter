@@ -21,8 +21,8 @@ Micropython code for a custom force-meter
 |---|---|---|
 |VCC|3.3V||
 |GND|GND||
-|SCL|GPIO 22|I2C Clock|
-|SDA|GPIO 21|I2C Data|
+|SCL|GPIO 9|I2C Clock|
+|SDA|GPIO 8|I2C Data|
 
 ### ESP32-S3 → Push button
 
@@ -34,11 +34,16 @@ GPIO 0 ──── [Resistor 10kΩ] ──── 3.3V  (pull-up)
 ### ESP32-S3 → HX711 → Dynamometer DYLY-108
 
 ```
-Dynamometer        HX711
-Red      (E+)  ───── E+
-Black    (E-)  ───── E-
-Green    (A-)  ───── A-
-White    (A+)  ───── A+
-```
+Dynamometer            HX711
+Green  (A-)    ─────   A-
+White  (A+)    ─────   A+
+                    |  E+ => 5V 
+                    |  E- => GND
+Red    (E+) => 10V  |
+Black  (E-) => GND  |
+Yellow (BARE) => GND|
 
+
+```
 > ⚠️ DYLY-108 is a 4-wires Wheatstone bridge. Be careful to the colour wire.
+It recommands 5~10V, so i add a 10V supply for the dynamometer to improve measure.
