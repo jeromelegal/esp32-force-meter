@@ -47,3 +47,14 @@ Yellow (BARE) => GND|
 ```
 > ⚠️ DYLY-108 is a 4-wires Wheatstone bridge. Be careful to the colour wire.
 It recommands 5~10V, so i add a 10V supply for the dynamometer to improve measure.
+
+
+---
+---
+# Micropython firmware :
+
+I use `Sixpan S3-N16R8` module (ESP32-S3), and i installed :
+
+`micropython V1.27.0`
+
+Instructions found on : [https://micropython.org/download/ESP32_GENERIC_S3/](https://micropython.org/download/ESP32_GENERIC_S3/)
