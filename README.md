@@ -27,8 +27,8 @@ Micropython code for a custom force-meter
 ### ESP32-S3 → Push button
 
 ```
-GPIO 0 ──── [Button] ──── GND
-GPIO 0 ──── [Resistor 10kΩ] ──── 3.3V  (pull-up)
+GPIO 17 ──── [Button] ──── GND
+GPIO 17 ──── [Resistor 10kΩ] ──── 3.3V  (pull-up)
 ```
 
 ### ESP32-S3 → HX711 → Dynamometer DYLY-108
