@@ -3,6 +3,11 @@ Micropython code for a custom force-meter
 ---
 ## Context :
 
+With my PompeTrack project (tracking Pompe disease), I wanted to measure my strenght evolution (arms and legs);
+So to have a real tracking, I needed numbers, something measurable, and that's a dynamometer which can give me it.
+
+I've bought a simply "hand dynamometer" for hands, but for legs and arms, I've not found something proper, so i make it !!
+
 # Step 1 - Hardware :
 
 > 1. Main board :
