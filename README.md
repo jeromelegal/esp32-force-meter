@@ -3,8 +3,42 @@ Micropython code for a custom force-meter
 ---
 ## Context :
 
+# Step 1 - Hardware :
+
+> 1. Main board :
+
+* `Sixpan S3-N16R8` module (ESP32-S3)  
+
+
+![ESP32-S3](docs/esp32-s3.jpeg)
+
+> 2. Oled screen :
+
+* `gm009605v4.3` - I2C communication
+
+![screen](docs/screen.jpg)
+
+> 3. Amplifier :
+
+* `hx711` deliver with an electronic load (20Kg for my vetsion)
+
+![hx711](docs/colours.jpg)
+
+> 4. Dynamometer :
+
+* `DYLY-108 - 1000N` --> 100Kg max force | supply 5~10V
+
+![dynamometer](docs/dyly.jpg)
+
+
+> 5. Push-button
+
+* `generic momentary button` 
+
+![button](docs/button.jpg)
+
 ---
-## Step 1 — Pinning
+## Pinning
 
 ### ESP32-S3 → HX711 amplifier
 
@@ -50,11 +84,16 @@ It recommands 5~10V, so i add a 10V supply for the dynamometer to improve measur
 
 
 ---
----
-# Micropython firmware :
+# Step 2 - Software :
 
-I use `Sixpan S3-N16R8` module (ESP32-S3), and i installed :
+## 1. Embedded firmware : 
+To implement a language I know, I installed *micropython* on the module.  
 
+Using `Sixpan S3-N16R8` module (ESP32-S3), and installed :
 `micropython V1.27.0`
 
-Instructions found on : [https://micropython.org/download/ESP32_GENERIC_S3/](https://micropython.org/download/ESP32_GENERIC_S3/)
+> Installation instructions found on : [https://micropython.org/download/ESP32_GENERIC_S3/](https://micropython.org/download/ESP32_GENERIC_S3/)
+
+## 2. Micropython IDE :
+To edit code and directly upload on the board, I found the perfect software :  
+**[Thonny](https://thonny.org/)**
