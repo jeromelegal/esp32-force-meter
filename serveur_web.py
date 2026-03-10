@@ -51,147 +51,95 @@ def extraire_parametres(chemin):
     return chemin, params
 
 
-def generer_json_payload(programmes):
-    """Génère le JSON payload dans le format cible avec métriques structurées"""
-    payload = {
-        "metrics": []
-    }
-
-    t = time.gmtime()
-    timestamp_iso = "%04d-%02d-%02dT%02d:%02d:%02d+00:00" % (
-        t[0], t[1], t[2], t[3], t[4], t[5]
-    )
-
-    for programme in programmes:
-        if not programme["valeurs"]:
-            continue  # Ignore les programmes sans mesures
-
-        # Convertir les valeurs en Newtons (1 kg ≈ 9.81 N)
-        valeurs_n = [round(valeur * 9.81, 2) for valeur in programme["valeurs"]]
-
-        metric = {
-            "name": programme["nom"],
-            "type": "force",
-            "data": []
-        }
-
-        for valeur in valeurs_n:
-            metric["data"].append({
-                "qty": valeur,
-                "date": timestamp_iso,
-                "units": "N"
-            })
-
-        payload["metrics"].append(metric)
-
-    return json.dumps(payload)
-
 # ====================== ROUTES ======================
 def generer_html_dashboard(programmes, token):
     html = f"""<!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dynamometer Dashboard</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dynamometer Dashboard</title>
 
-<style>
-body {{ font-family: Arial; margin:20px; max-width:800px; margin:auto; }}
-.card {{ border:1px solid #ddd; padding:15px; margin-bottom:15px; border-radius:8px; }}
-.btn {{ padding:10px; border:none; border-radius:5px; color:white; font-weight:bold; width:100%; }}
-.btn-send {{ background:#28a745; }}
-.btn-reset {{ background:#dc3545; }}
-.btn-edit {{ background:#007bff; display:block; text-align:center; text-decoration:none; padding:10px; color:white; }}
-textarea {{ width:100%; font-family:monospace; }}
-</style>
-</head>
+            <style>
+                body {{ font-family: Arial; margin:20px; max-width:800px; margin:auto; }}
+                .card {{ border:1px solid #ddd; padding:15px; margin-bottom:15px; border-radius:8px; }}
+                .btn {{ padding:10px; border:none; border-radius:5px; color:white; font-weight:bold; width:100%; }}
+                .btn-send {{ background:#28a745; }}
+                .btn-reset {{ background:#dc3545; }}
+                .btn-edit {{ background:#007bff; display:block; text-align:center; text-decoration:none; padding:10px; color:white; }}
+                textarea {{ width:100%; font-family:monospace; }}
+            </style>
+    </head>
 
 <body>
+    <h1>Session Measurements</h1>
+    <a href="/programmes" class="btn-edit">Edit Programs</a>
+    <hr>
+    <div id="mesures-container">Loading...</div>
+    <hr>
+    <h2>JSON Payload Preview</h2>
+    <textarea id="json-payload" rows="12"></textarea>
+    <hr>
+    <h2>Export Data</h2>
 
-<h1>Session Measurements</h1>
+    <input type="text" id="endpoint-url" value="http://ingestion.lan/ingest/strength">
+    <br><br>
 
-<a href="/programmes" class="btn-edit">Edit Programs</a>
+    <button class="btn btn-send" onclick="envoyerAuPC()">Send to PC</button>
+    <br><br>
 
-<hr>
+        <button class="btn btn-reset" onclick="window.location.href='/reset_mesures'">
+        Reset Session
+        </button>
 
-<div id="mesures-container">Loading...</div>
+        <script>
+            const TOKEN = "{token}"
+            function chargerMesures() {{
+            fetch('/api/mesures')
+            .then(r => r.json())
+            .then(programmes => {{
 
-<hr>
+            afficherMesures(programmes)
 
-<h2>JSON Payload Preview</h2>
+            const payload = {{
+            metrics: []
+            }}
 
-<textarea id="json-payload" rows="12"></textarea>
 
-<hr>
 
-<h2>Export Data</h2>
-
-<input type="text" id="endpoint-url" value="http://ingestion.lan/ingest/strength">
-
-<br><br>
-
-<button class="btn btn-send" onclick="envoyerAuPC()">Send to PC</button>
-
-<br><br>
-
-<button class="btn btn-reset" onclick="window.location.href='/reset_mesures'">
-Reset Session
-</button>
-
-<script>
-
-const TOKEN = "{token}"
-
-function chargerMesures() {{
-
-fetch('/api/mesures')
-.then(r => r.json())
-.then(programmes => {{
-
-afficherMesures(programmes)
-
-const payload = {{
-metrics: []
-}}
-
+             
 programmes.forEach(p => {{
 
 if(p.valeurs.length === 0) return
 
-const metric = {{
-name: p.nom,
-type: "force",
-data: []
-}}
-
 p.valeurs.forEach(v => {{
 
-metric.data.push({{
-qty: Math.round(v * 9.81 * 100) / 100,
+payload.metrics.push({{
+name: p.nom,
+type: "force",
+data: [{{
+qty: v,
 date: new Date().toISOString(),
 units: "N"
+}}]
 }})
 
 }})
 
-payload.metrics.push(metric)
-
 }})
+             
 
-document.getElementById("json-payload").value =
-JSON.stringify(payload,null,4)
+        document.getElementById("json-payload").value =
+        JSON.stringify(payload,null,4)
 
-}})
+        }})
 
-}}
+        }}
 
-function afficherMesures(programmes) {{
-
-const container = document.getElementById("mesures-container")
-
-container.innerHTML = ""
-
-programmes.forEach(p => {{
+    function afficherMesures(programmes) {{
+        const container = document.getElementById("mesures-container")
+        container.innerHTML = ""
+    programmes.forEach(p => {{
 
 const div = document.createElement("div")
 div.className = "card"
@@ -199,13 +147,12 @@ div.className = "card"
 let valeurs = "No measurements yet"
 
 if(p.valeurs.length > 0){{
-valeurs = p.valeurs.map(v => (v*9.81).toFixed(2) + " N").join(", ")
+valeurs = p.valeurs.map(v => v.toFixed(2) + " N").join(", ")
 }}
 
 div.innerHTML =
 "<h3>"+p.nom+"</h3>"+
 "<p><b>Results:</b> "+valeurs+"</p>"+
-"<p>Target: "+p.poids+" kg</p>"+
 "<p>Duration: "+p.temps+" s</p>"
 
 container.appendChild(div)
@@ -257,7 +204,7 @@ def generer_html_programmes(programmes):
     """Génère le HTML de la page de gestion des programmes"""
     liste_html = ""
     for p in programmes:
-        liste_html += f"<li>{p['nom']} - {p['temps']}s - {p['poids']}kg "
+        liste_html += f"<li>{p['nom']} - {p['temps']}s "
         liste_html += f"<a href='/supprimer?id={p['id']}' style='color:red;'>[Delete]</a></li>"
 
     html = f"""<!DOCTYPE html>
@@ -283,7 +230,6 @@ def generer_html_programmes(programmes):
         <form action="/ajouter" method="GET">
             Name: <input type="text" name="nom" required><br><br>
             Time (s): <input type="number" name="temps" required><br><br>
-            Weight (kg): <input type="number" step="0.1" name="poids" required><br><br>
             <button type="submit" class="btn" style="background-color: #28a745;">Add Program</button>
         </form>
     </body>
@@ -402,13 +348,12 @@ def gerer_requetes(serveur, programmes, token):
             gerer_route_envoyer(conn, lignes, params, token)
 
         elif route == '/ajouter':
-            if 'nom' in params and 'temps' in params and 'poids' in params:
+            if 'nom' in params and 'temps' in params:
                 nouvel_id = max((p['id'] for p in programmes), default=0) + 1
                 programmes.append({
                     "id": nouvel_id,
                     "nom": params['nom'],
                     "temps": int(params['temps']),
-                    "poids": float(params['poids']),
                     "valeurs": [],
                     "total": 3
                 })

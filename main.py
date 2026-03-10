@@ -127,15 +127,15 @@ def faire_mesure():
         # Display live feedback
         oled.fill(0)
         oled.text("LIVE FORCE:", 0, 0)
-        oled.text(f"{force_actuelle:.1f} Kg", 0, 15)
+        oled.text(f"{force_actuelle:.1f} N", 0, 15)
         oled.text("MAXIMUM:", 0, 35)
-        oled.text(f"{max_force:.1f} Kg", 0, 50)
+        oled.text(f"{max_force:.1f} N", 0, 50)
         oled.show()
 
     # End of measurement
     oled.fill(0)
     oled.text("FINISHED!", 25, 20)
-    oled.text(f"Score: {max_force:.1f} Kg", 0, 40)
+    oled.text(f"Score: {max_force:.1f} N", 0, 40)
     oled.show()
     time.sleep(3)
 
