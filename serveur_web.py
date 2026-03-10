@@ -111,23 +111,21 @@ def generer_html_dashboard(programmes, token):
 programmes.forEach(p => {{
 
 if(p.valeurs.length === 0) return
-
-p.valeurs.forEach(v => {{
-
-payload.metrics.push({{
+const metric = {{
 name: p.nom,
 type: "force",
-data: [{{
+data: []
+}}
+p.valeurs.forEach(v => {{
+metric.data.push({{
 qty: v,
 date: new Date().toISOString(),
 units: "N"
-}}]
+}})
+}})
+payload.metrics.push(metric)
 }})
 
-}})
-
-}})
-             
 
         document.getElementById("json-payload").value =
         JSON.stringify(payload,null,4)
