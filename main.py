@@ -15,6 +15,7 @@ PIN_BOUTON = 17
 PIN_DT = 4   
 PIN_SCK = 5  
 FACTEUR_CALIBRAGE = 1683.78 
+TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdHJlbmd0aC1kZXZpY2UtdjEiLCJzY29wZXMiOlsiaW5nZXN0OnN0cmVuZ3RoIl0sImlzcyI6InBvbXBldHJhY2stZGV2aWNlIn0.uAm1CGALvtnXLKOczM_WMjLDd93goy-wR1gnn9bu0Lc"
 
 # --- 2. HARDWARE INITIALIZATION ---
 # Initialize I2C for OLED display
@@ -147,7 +148,7 @@ afficher_menu()
 while True:
     # 6.1 Handle Web Server requests (if active)
     if serveur:
-        serveur_web.gerer_requetes(serveur, programmes)
+        serveur_web.gerer_requetes(serveur, programmes, TOKEN)
         
     # 6.2 Handle User Inputs
     action = lire_bouton()
@@ -175,3 +176,4 @@ while True:
 
     # Small delay to prevent high CPU usage
     time.sleep_ms(50)
+
